@@ -61,68 +61,55 @@ async function fetchLeaderboardData() {
     }
 }
 
-// Function to transform API data to our format
+// Transform API data to our format
 function transformLeaderboardData(data) {
-    console.log('Transforming data:', data);
+    console.log('API Response data:', data);
+    console.log('API Response structure:', JSON.stringify(data, null, 2));
     
-    // Check if data is an array
-    if (!Array.isArray(data)) {
-        console.error('Expected array of players, got:', typeof data);
+    if (!data || !data.leaderboardRows || !Array.isArray(data.leaderboardRows)) {
+        console.error('Invalid API response format:', data);
         return [];
     }
 
-    return data.map(player => {
-        // Log the complete player object for debugging
-        console.log('Processing player:', JSON.stringify(player, null, 2));
-        
-        // Extract player data from the API response format
-        const firstName = player.first_name || 'Unknown';
-        const lastName = player.last_name || 'Unknown';
-        const position = player.position || 'Unknown';
-        const total = player.total_to_par || 'E';
-        const status = player.status || 'active';
-        const holesPlayed = player.holes_played || 0;
-        
-        // Get round scores from the rounds array
-        const rounds = player.rounds || [];
-        console.log('Player rounds:', rounds);
-        
-        // Extract round scores with proper error handling
-        let round1 = 'E';
-        let round2 = 'E';
-        let round3 = 'E';
-        let round4 = 'E';
-        
-        if (Array.isArray(rounds)) {
-            rounds.forEach(round => {
-                const score = round.total_to_par;
-                switch(round.round_number) {
-                    case 1: round1 = score; break;
-                    case 2: round2 = score; break;
-                    case 3: round3 = score; break;
-                    case 4: round4 = score; break;
-                }
-            });
-        }
-        
-        // Calculate today's score (round 4)
-        const today = round4;
+    return data.leaderboardRows.map(player => {
+        // Extract position number from position string (e.g., "T3" -> 3)
+        const positionMatch = player.position.match(/\d+/);
+        const position = positionMatch ? parseInt(positionMatch[0]) : null;
 
-        const transformedPlayer = {
-            position,
-            name: `${firstName} ${lastName}`,
-            total,
-            today,
-            thru: holesPlayed === 18 ? 'F' : holesPlayed.toString(),
-            round1,
-            round2,
-            round3,
-            round4,
-            status
+        // Calculate total strokes
+        const totalStrokes = player.totalStrokesFromCompletedRounds || '0';
+
+        // Get current round score
+        const currentRoundScore = player.currentRoundScore || '0';
+
+        // Get status
+        let status = 'Active';
+        if (player.status === 'complete') {
+            status = 'Complete';
+        } else if (player.status === 'cut') {
+            status = 'Cut';
+        } else if (player.status === 'withdrawn') {
+            status = 'WD';
+        }
+
+        return {
+            position: position,
+            playerName: `${player.firstName} ${player.lastName}`,
+            totalStrokes: parseInt(totalStrokes),
+            currentRoundScore: parseInt(currentRoundScore),
+            status: status,
+            isAmateur: player.isAmateur || false,
+            teeTime: player.teeTime || 'TBD',
+            currentRound: parseInt(player.currentRound) || 1,
+            thru: player.thru || '0',
+            total: player.total || '0'
         };
-        
-        console.log('Transformed player:', transformedPlayer);
-        return transformedPlayer;
+    }).sort((a, b) => {
+        // Sort by position (null positions go to the end)
+        if (a.position === null && b.position === null) return 0;
+        if (a.position === null) return 1;
+        if (b.position === null) return -1;
+        return a.position - b.position;
     });
 }
 
