@@ -76,25 +76,30 @@ function transformLeaderboardData(data) {
         // Log the player object to see its structure
         console.log('Processing player:', player);
         
-        // Extract player data with fallbacks for different API response formats
-        const firstName = player.first_name || player.firstName || player.player_first_name || 'Unknown';
-        const lastName = player.last_name || player.lastName || player.player_last_name || 'Unknown';
-        const position = player.position || player.pos || player.player_position || 'Unknown';
-        const total = player.total || player.totalScore || player.score || player.total_to_par || 'E';
-        const today = player.today || player.todayScore || player.round4 || player.today_to_par || 'E';
-        const thru = player.thru || player.holesPlayed || player.holes_played || '';
-        const round1 = player.round1 || player.r1 || player.round1_score || 'E';
-        const round2 = player.round2 || player.r2 || player.round2_score || 'E';
-        const round3 = player.round3 || player.r3 || player.round3_score || 'E';
-        const round4 = player.round4 || player.r4 || player.round4_score || 'E';
-        const status = player.status || player.player_status || 'Active';
+        // Extract player data from the API response format
+        const firstName = player.first_name || 'Unknown';
+        const lastName = player.last_name || 'Unknown';
+        const position = player.position || 'Unknown';
+        const total = player.total_to_par || 'E';
+        const status = player.status || 'active';
+        const holesPlayed = player.holes_played || 0;
+        
+        // Get round scores from the rounds array
+        const rounds = player.rounds || [];
+        const round1 = rounds.find(r => r.round_number === 1)?.total_to_par || 'E';
+        const round2 = rounds.find(r => r.round_number === 2)?.total_to_par || 'E';
+        const round3 = rounds.find(r => r.round_number === 3)?.total_to_par || 'E';
+        const round4 = rounds.find(r => r.round_number === 4)?.total_to_par || 'E';
+        
+        // Calculate today's score (round 4)
+        const today = round4;
 
         return {
             position,
             name: `${firstName} ${lastName}`,
             total,
             today,
-            thru,
+            thru: holesPlayed === 18 ? 'F' : holesPlayed.toString(),
             round1,
             round2,
             round3,
