@@ -30,35 +30,19 @@ async function fetchLeaderboardData() {
         console.log('API Response structure:', JSON.stringify(data, null, 2));
 
         // Check if we have the expected data structure
-        if (!data || !data.leaderboard) {
+        if (!data || !data.results || !data.results.leaderboard) {
             console.error('Invalid API response format:', data);
-            // Try to find the leaderboard data in a different location
-            if (data.results && data.results.leaderboard) {
-                console.log('Found leaderboard data in data.results.leaderboard');
-                return transformLeaderboardData(data.results.leaderboard);
-            } else if (Array.isArray(data)) {
-                console.log('Data is directly an array of players');
-                return transformLeaderboardData(data);
-            }
             return [];
         }
 
         // Transform the leaderboard data
-        const transformedData = transformLeaderboardData(data.leaderboard);
+        const transformedData = transformLeaderboardData(data.results.leaderboard);
         console.log('Transformed data:', transformedData);
         
         return transformedData;
     } catch (error) {
         console.error('Error fetching leaderboard data:', error);
-        // Return mock data for testing
-        console.log('Using mock data instead');
-        return {
-            leaderboard: [
-                { position: "1", player_name: "Justin Rose", total_to_par: "-8", round1_score: 68, round2_score: 68, status: "ACTIVE" },
-                { position: "2", player_name: "Bryson DeChambeau", total_to_par: "-7", round1_score: 71, round2_score: 68, status: "ACTIVE" },
-                { position: "T3", player_name: "Scottie Scheffler", total_to_par: "-4", round1_score: 72, round2_score: 70, status: "ACTIVE" }
-            ]
-        };
+        return [];
     }
 }
 
@@ -73,8 +57,8 @@ function transformLeaderboardData(data) {
     }
 
     return data.map(player => {
-        // Log the player object to see its structure
-        console.log('Processing player:', player);
+        // Log the complete player object for debugging
+        console.log('Processing player:', JSON.stringify(player, null, 2));
         
         // Extract player data from the API response format
         const firstName = player.first_name || 'Unknown';
@@ -86,15 +70,30 @@ function transformLeaderboardData(data) {
         
         // Get round scores from the rounds array
         const rounds = player.rounds || [];
-        const round1 = rounds.find(r => r.round_number === 1)?.total_to_par || 'E';
-        const round2 = rounds.find(r => r.round_number === 2)?.total_to_par || 'E';
-        const round3 = rounds.find(r => r.round_number === 3)?.total_to_par || 'E';
-        const round4 = rounds.find(r => r.round_number === 4)?.total_to_par || 'E';
+        console.log('Player rounds:', rounds);
+        
+        // Extract round scores with proper error handling
+        let round1 = 'E';
+        let round2 = 'E';
+        let round3 = 'E';
+        let round4 = 'E';
+        
+        if (Array.isArray(rounds)) {
+            rounds.forEach(round => {
+                const score = round.total_to_par;
+                switch(round.round_number) {
+                    case 1: round1 = score; break;
+                    case 2: round2 = score; break;
+                    case 3: round3 = score; break;
+                    case 4: round4 = score; break;
+                }
+            });
+        }
         
         // Calculate today's score (round 4)
         const today = round4;
 
-        return {
+        const transformedPlayer = {
             position,
             name: `${firstName} ${lastName}`,
             total,
@@ -106,6 +105,9 @@ function transformLeaderboardData(data) {
             round4,
             status
         };
+        
+        console.log('Transformed player:', transformedPlayer);
+        return transformedPlayer;
     });
 }
 
@@ -118,7 +120,8 @@ async function updateLeaderboardData() {
         return;
     }
 
-    mastersData = transformLeaderboardData(data);
+    // The data is already transformed in fetchLeaderboardData
+    mastersData = data;
     console.log('Updated mastersData:', mastersData);
     return mastersData;
 }
