@@ -1,74 +1,101 @@
+// API configuration
+const API_CONFIG = {
+    url: 'https://golf-leaderboard-data.p.rapidapi.com/leaderboard/25',
+    headers: {
+        'x-rapidapi-host': 'golf-leaderboard-data.p.rapidapi.com',
+        'x-rapidapi-key': '99f110f056msh3c3016b9a453a90p131100jsn64367f516c61'
+    }
+};
+
+// Function to fetch leaderboard data
+async function fetchLeaderboardData() {
+    try {
+        const response = await fetch(API_CONFIG.url, {
+            method: 'GET',
+            headers: API_CONFIG.headers
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching leaderboard data:', error);
+        return null;
+    }
+}
+
+// Function to transform API data to our format
+function transformLeaderboardData(apiData) {
+    if (!apiData || !apiData.leaderboard) {
+        return [];
+    }
+
+    return apiData.leaderboard.map(player => ({
+        position: player.position,
+        name: player.player_name,
+        scoreToPar: player.total_to_par,
+        round1: player.round1_score,
+        round2: player.round2_score,
+        round3: player.round3_score,
+        round4: player.round4_score,
+        cut: player.status === 'CUT'
+    }));
+}
+
+// Function to update the leaderboard display
+async function updateLeaderboard() {
+    const data = await fetchLeaderboardData();
+    if (!data) {
+        console.error('Failed to fetch leaderboard data');
+        return;
+    }
+
+    const transformedData = transformLeaderboardData(data);
+    mastersData.length = 0; // Clear existing data
+    mastersData.push(...transformedData); // Add new data
+
+    // Update the display
+    updateLeaderboardDisplay();
+}
+
+// Update the display when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    updateLeaderboard();
+    // Refresh data every 5 minutes
+    setInterval(updateLeaderboard, 5 * 60 * 1000);
+});
+
 // Masters Tournament mock data
 const mastersData = [
-    { pos: "1", player: "Scottie Scheffler", toPar: "-7", thru: "F", today: "-3", r1: "72", r2: "72", r3: "", r4: "", total: "144", cut: "" },
-    { pos: "2", player: "Ludvig Åberg", toPar: "-4", thru: "F", today: "-2", r1: "73", r2: "69", r3: "", r4: "", total: "142", cut: "" },
-    { pos: "T3", player: "Collin Morikawa", toPar: "-4", thru: "F", today: "-2", r1: "71", r2: "70", r3: "", r4: "", total: "141", cut: "" },
-    { pos: "T3", player: "Max Homa", toPar: "-4", thru: "F", today: "-1", r1: "70", r2: "71", r3: "", r4: "", total: "141", cut: "" },
-    { pos: "T5", player: "Tommy Fleetwood", toPar: "-3", thru: "F", today: "-3", r1: "73", r2: "70", r3: "", r4: "", total: "143", cut: "" },
-    { pos: "T5", player: "Bryson DeChambeau", toPar: "-3", thru: "F", today: "-2", r1: "71", r2: "72", r3: "", r4: "", total: "143", cut: "" },
-    { pos: "T7", player: "Xander Schauffele", toPar: "-2", thru: "F", today: "-2", r1: "72", r2: "72", r3: "", r4: "", total: "144", cut: "" },
-    { pos: "T7", player: "Patrick Cantlay", toPar: "-2", thru: "F", today: "-3", r1: "73", r2: "70", r3: "", r4: "", total: "143", cut: "" },
-    { pos: "T9", player: "Hideki Matsuyama", toPar: "-1", thru: "F", today: "+1", r1: "70", r2: "71", r3: "", r4: "", total: "141", cut: "" },
-    { pos: "T9", player: "Justin Thomas", toPar: "-1", thru: "F", today: "-2", r1: "74", r2: "69", r3: "", r4: "", total: "143", cut: "" },
-    { pos: "T11", player: "Jon Rahm", toPar: "E", thru: "F", today: "E", r1: "73", r2: "70", r3: "", r4: "", total: "143", cut: "" },
-    { pos: "T11", player: "Viktor Hovland", toPar: "E", thru: "F", today: "-1", r1: "72", r2: "73", r3: "", r4: "", total: "145", cut: "" },
-    { pos: "T11", player: "Will Zalatoris", toPar: "E", thru: "F", today: "E", r1: "70", r2: "73", r3: "", r4: "", total: "143", cut: "" },
-    { pos: "T14", player: "Brooks Koepka", toPar: "+1", thru: "F", today: "+2", r1: "71", r2: "69", r3: "", r4: "", total: "140", cut: "" },
-    { pos: "T14", player: "Cameron Smith", toPar: "+1", thru: "F", today: "-3", r1: "72", r2: "73", r3: "", r4: "", total: "145", cut: "" },
-    { pos: "MC", player: "Jordan Spieth", toPar: "+5", thru: "F", today: "+2", r1: "75", r2: "74", r3: "", r4: "", total: "149", cut: "CUT" },
-    { pos: "MC", player: "Rory McIlroy", toPar: "+4", thru: "F", today: "+1", r1: "74", r2: "74", r3: "", r4: "", total: "148", cut: "CUT" },
-    { pos: "MC", player: "Dustin Johnson", toPar: "+4", thru: "F", today: "+2", r1: "72", r2: "76", r3: "", r4: "", total: "148", cut: "CUT" },
-    { pos: "MC", player: "Phil Mickelson", toPar: "+6", thru: "F", today: "+3", r1: "75", r2: "76", r3: "", r4: "", total: "151", cut: "CUT" },
-    { pos: "MC", player: "Tiger Woods", toPar: "+7", thru: "F", today: "+3", r1: "76", r2: "75", r3: "", r4: "", total: "151", cut: "CUT" }
+    { position: "1", name: "Justin Rose", scoreToPar: "-8", round1: 68, round2: 68, round3: null, round4: null, cut: false },
+    { position: "2", name: "Bryson DeChambeau", scoreToPar: "-7", round1: 71, round2: 68, round3: null, round4: null, cut: false },
+    { position: "T3", name: "Scottie Scheffler", scoreToPar: "-4", round1: 72, round2: 70, round3: null, round4: null, cut: false },
+    { position: "T3", name: "Ludvig Åberg", scoreToPar: "-4", round1: 73, round2: 69, round3: null, round4: null, cut: false },
+    { position: "T5", name: "Tommy Fleetwood", scoreToPar: "-3", round1: 73, round2: 70, round3: null, round4: null, cut: false },
+    { position: "T5", name: "Xander Schauffele", scoreToPar: "-3", round1: 72, round2: 71, round3: null, round4: null, cut: false },
+    { position: "T7", name: "Patrick Cantlay", scoreToPar: "-2", round1: 73, round2: 70, round3: null, round4: null, cut: false },
+    { position: "T7", name: "Hideki Matsuyama", scoreToPar: "-2", round1: 70, round2: 73, round3: null, round4: null, cut: false },
+    { position: "T9", name: "Justin Thomas", scoreToPar: "-1", round1: 74, round2: 69, round3: null, round4: null, cut: false },
+    { position: "T9", name: "Jon Rahm", scoreToPar: "-1", round1: 73, round2: 70, round3: null, round4: null, cut: false },
+    { position: "T11", name: "Viktor Hovland", scoreToPar: "E", round1: 72, round2: 73, round3: null, round4: null, cut: false },
+    { position: "T11", name: "Will Zalatoris", scoreToPar: "E", round1: 70, round2: 73, round3: null, round4: null, cut: false },
+    { position: "T14", name: "Brooks Koepka", scoreToPar: "+1", round1: 71, round2: 69, round3: null, round4: null, cut: false },
+    { position: "T14", name: "Cameron Smith", scoreToPar: "+1", round1: 72, round2: 73, round3: null, round4: null, cut: false },
+    { position: "MC", name: "Jordan Spieth", scoreToPar: "+5", round1: 75, round2: 74, round3: null, round4: null, cut: true },
+    { position: "MC", name: "Rory McIlroy", scoreToPar: "+4", round1: 74, round2: 74, round3: null, round4: null, cut: true },
+    { position: "MC", name: "Phil Mickelson", scoreToPar: "+6", round1: 75, round2: 76, round3: null, round4: null, cut: true },
+    { position: "MC", name: "Tiger Woods", scoreToPar: "+7", round1: 76, round2: 75, round3: null, round4: null, cut: true }
 ];
 
 // Pool participants mock data
 const participantsData = [
-    {
-        name: "John Smith",
-        players: [
-            "Scottie Scheffler", "Tommy Fleetwood", "Xander Schauffele", 
-            "Justin Thomas", "Jon Rahm", "Hideki Matsuyama", "Max Homa", 
-            "Ludvig Åberg", "Patrick Cantlay", "Collin Morikawa", 
-            "Jordan Spieth", "Rory McIlroy"
-        ]
-    },
-    {
-        name: "Jane Doe",
-        players: [
-            "Collin Morikawa", "Max Homa", "Justin Thomas", 
-            "Xander Schauffele", "Tommy Fleetwood", "Jon Rahm", 
-            "Ludvig Åberg", "Patrick Cantlay", "Hideki Matsuyama", 
-            "Scottie Scheffler", "Jordan Spieth", "Rory McIlroy"
-        ]
-    },
-    {
-        name: "Michael Johnson",
-        players: [
-            "Tommy Fleetwood", "Scottie Scheffler", "Jon Rahm", 
-            "Hideki Matsuyama", "Max Homa", "Xander Schauffele", 
-            "Justin Thomas", "Ludvig Åberg", "Patrick Cantlay", 
-            "Collin Morikawa", "Brooks Koepka", "Viktor Hovland"
-        ]
-    },
-    {
-        name: "Sarah Williams",
-        players: [
-            "Scottie Scheffler", "Collin Morikawa", "Tommy Fleetwood", 
-            "Max Homa", "Ludvig Åberg", "Jordan Spieth", "Rory McIlroy", 
-            "Xander Schauffele", "Patrick Cantlay", "Hideki Matsuyama", 
-            "Justin Thomas", "Jon Rahm"
-        ]
-    },
-    {
-        name: "Robert Brown",
-        players: [
-            "Collin Morikawa", "Jordan Spieth", "Rory McIlroy", 
-            "Tommy Fleetwood", "Scottie Scheffler", "Max Homa", 
-            "Ludvig Åberg", "Xander Schauffele", "Cameron Smith", 
-            "Hideki Matsuyama", "Justin Thomas", "Tiger Woods"
-        ]
-    }
+    { name: "John Smith", picks: ["Scottie Scheffler", "Rory McIlroy", "Jon Rahm"] },
+    { name: "Sarah Johnson", picks: ["Xander Schauffele", "Justin Thomas", "Collin Morikawa"] },
+    { name: "Mike Wilson", picks: ["Viktor Hovland", "Patrick Cantlay", "Sam Burns"] },
+    { name: "Emily Davis", picks: ["Tony Finau", "Jordan Spieth", "Tiger Woods"] }
 ];
 
 // Initialize the application when DOM content is loaded
@@ -105,16 +132,13 @@ function populateMastersLeaderboard() {
         }
         
         row.innerHTML = `
-            <td>${player.pos}</td>
-            <td>${player.player}</td>
-            <td class="${getScoreClass(player.toPar)}">${player.toPar}</td>
-            <td>${player.thru}</td>
-            <td class="${getScoreClass(player.today)}">${player.today}</td>
-            <td>${player.r1}</td>
-            <td>${player.r2}</td>
-            <td>${player.r3}</td>
-            <td>${player.r4}</td>
-            <td>${player.total}</td>
+            <td>${player.position}</td>
+            <td>${player.name}</td>
+            <td class="${getScoreClass(player.scoreToPar)}">${player.scoreToPar}</td>
+            <td>${player.round1}</td>
+            <td>${player.round2}</td>
+            <td>${player.round3}</td>
+            <td>${player.round4}</td>
         `;
         
         tableBody.appendChild(row);
@@ -189,20 +213,20 @@ function populatePoolLeaderboard() {
 function calculateParticipantScores() {
     return participantsData.map(participant => {
         // Calculate how many groups survived
-        const groupsSurvived = countSurvivedGroups(participant.players);
+        const groupsSurvived = countSurvivedGroups(participant.picks);
         
         // Determine status
         const status = groupsSurvived >= 7 ? 'Active' : 'Eliminated';
         
         // Calculate total score
-        const totalScore = calculateTotalScore(participant.players, groupsSurvived);
+        const totalScore = calculateTotalScore(participant.picks, groupsSurvived);
         
         return {
             name: participant.name,
             groupsSurvived: groupsSurvived,
             status: status,
             totalScore: totalScore,
-            players: participant.players
+            picks: participant.picks
         };
     });
 }
@@ -210,7 +234,7 @@ function calculateParticipantScores() {
 // Count how many of a participant's player groups survived the cut
 function countSurvivedGroups(playerList) {
     return playerList.filter(playerName => {
-        const playerData = mastersData.find(p => p.player === playerName);
+        const playerData = mastersData.find(p => p.name === playerName);
         return playerData && playerData.cut !== "CUT";
     }).length;
 }
@@ -219,11 +243,11 @@ function countSurvivedGroups(playerList) {
 function calculateTotalScore(playerList, groupsSurvived) {
     // Get scores for each player
     const playerScores = playerList.map(playerName => {
-        const playerData = mastersData.find(p => p.player === playerName);
+        const playerData = mastersData.find(p => p.name === playerName);
         if (!playerData) return null;
         return {
             name: playerName,
-            score: playerData.toPar,
+            score: playerData.scoreToPar,
             madeCut: playerData.cut !== "CUT"
         };
     }).filter(p => p !== null);
@@ -262,27 +286,27 @@ function displayParticipantDetails(participantName) {
     if (!participant) return;
     
     // Find player data for each of the participant's selections
-    const playerDetails = participant.players.map(playerName => {
-        const playerData = mastersData.find(p => p.player === playerName);
+    const playerDetails = participant.picks.map(playerName => {
+        const playerData = mastersData.find(p => p.name === playerName);
         if (!playerData) return {
             name: playerName,
             score: "N/A",
             madeCut: false,
-            pos: "N/A"
+            position: "N/A"
         };
         
         return {
             name: playerName,
-            score: playerData.toPar,
+            score: playerData.scoreToPar,
             madeCut: playerData.cut !== "CUT",
-            pos: playerData.pos
+            position: playerData.position
         };
     });
     
     // Calculate participant stats
-    const groupsSurvived = countSurvivedGroups(participant.players);
+    const groupsSurvived = countSurvivedGroups(participant.picks);
     const status = groupsSurvived >= 7 ? 'Active' : 'Eliminated';
-    const totalScore = calculateTotalScore(participant.players, groupsSurvived);
+    const totalScore = calculateTotalScore(participant.picks, groupsSurvived);
     
     // Sort player details by score (best to worst)
     playerDetails.sort((a, b) => {
@@ -321,7 +345,7 @@ function displayParticipantDetails(participantName) {
     playerDetails.forEach(player => {
         detailsHTML += `
             <tr${player.madeCut ? '' : ' class="table-secondary text-muted"'}>
-                <td>${player.pos}</td>
+                <td>${player.position}</td>
                 <td>${player.name}</td>
                 <td class="${getScoreClass(player.score)}">${player.score}</td>
                 <td>${player.madeCut ? 'Made Cut' : 'Missed Cut'}</td>
