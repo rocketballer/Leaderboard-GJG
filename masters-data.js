@@ -12,22 +12,33 @@ let mastersData = [];
 
 // Function to fetch leaderboard data from RapidAPI
 async function fetchLeaderboardData() {
+    console.log('Fetching data from API...');
     try {
-        console.log('Fetching data from API...');
         const response = await fetch(API_CONFIG.url, {
             method: 'GET',
             headers: API_CONFIG.headers
         });
-        
+
         console.log('API Response status:', response.status);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const data = await response.json();
         console.log('API Response data:', data);
-        return data;
+
+        // Check if we have the expected data structure
+        if (!data || !data.leaderboard) {
+            console.error('Invalid API response format:', data);
+            return [];
+        }
+
+        // Transform the leaderboard data
+        const transformedData = transformLeaderboardData(data.leaderboard);
+        console.log('Transformed data:', transformedData);
+        
+        return transformedData;
     } catch (error) {
         console.error('Error fetching leaderboard data:', error);
         // Return mock data for testing
@@ -43,31 +54,45 @@ async function fetchLeaderboardData() {
 }
 
 // Function to transform API data to our format
-function transformLeaderboardData(apiData) {
-    console.log('Transforming data:', apiData);
+function transformLeaderboardData(data) {
+    console.log('Transforming data:', data);
     
-    // Check if we have the expected data structure
-    if (!apiData || !apiData.results || !apiData.results.leaderboard) {
-        console.error('Invalid API data format:', apiData);
+    // Check if data is an array
+    if (!Array.isArray(data)) {
+        console.error('Expected array of players, got:', typeof data);
         return [];
     }
 
-    const transformedData = apiData.results.leaderboard.map(player => ({
-        position: player.position || '-',
-        name: player.player_name || 'Unknown',
-        scoreToPar: player.total_to_par || 'E',
-        round1: player.round1_score || '-',
-        round2: player.round2_score || '-',
-        round3: player.round3_score || '-',
-        round4: player.round4_score || '-',
-        cut: player.status === 'CUT',
-        thru: player.thru || '-',
-        today: player.today || '-',
-        total: player.total || '-'
-    }));
-    
-    console.log('Transformed data:', transformedData);
-    return transformedData;
+    return data.map(player => {
+        // Log the player object to see its structure
+        console.log('Processing player:', player);
+        
+        // Extract player data with fallbacks
+        const firstName = player.first_name || player.firstName || 'Unknown';
+        const lastName = player.last_name || player.lastName || 'Unknown';
+        const position = player.position || player.pos || 'Unknown';
+        const total = player.total || player.totalScore || player.score || 'E';
+        const today = player.today || player.todayScore || player.round4 || 'E';
+        const thru = player.thru || player.holesPlayed || '';
+        const round1 = player.round1 || player.r1 || 'E';
+        const round2 = player.round2 || player.r2 || 'E';
+        const round3 = player.round3 || player.r3 || 'E';
+        const round4 = player.round4 || player.r4 || 'E';
+        const status = player.status || 'Active';
+
+        return {
+            position,
+            name: `${firstName} ${lastName}`,
+            total,
+            today,
+            thru,
+            round1,
+            round2,
+            round3,
+            round4,
+            status
+        };
+    });
 }
 
 // Function to update the leaderboard data
