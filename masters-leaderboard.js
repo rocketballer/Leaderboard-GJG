@@ -10,6 +10,7 @@ function getScoreClass(score) {
 
 // Function to update the leaderboard display
 function updateLeaderboardDisplay() {
+    console.log('Updating leaderboard display...');
     const tableBody = document.querySelector('#masters-leaderboard tbody');
     if (!tableBody) {
         console.error('Could not find table body element');
@@ -22,6 +23,8 @@ function updateLeaderboardDisplay() {
         console.error('No data available to display');
         return;
     }
+    
+    console.log('Displaying data:', mastersData);
     
     mastersData.forEach(player => {
         const row = document.createElement('tr');
@@ -62,8 +65,10 @@ function updateLeaderboardDisplay() {
 
 // Function to refresh the leaderboard
 async function refreshLeaderboard() {
+    console.log('Refreshing leaderboard...');
     try {
-        await updateLeaderboardData();
+        const data = await updateLeaderboardData();
+        console.log('Got updated data:', data);
         updateLeaderboardDisplay();
     } catch (error) {
         console.error('Error refreshing leaderboard:', error);
@@ -72,15 +77,22 @@ async function refreshLeaderboard() {
 
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded, initializing leaderboard...');
+    
     // Add event listener for the refresh button
     const refreshBtn = document.getElementById('refresh-btn');
     if (refreshBtn) {
+        console.log('Adding refresh button listener');
         refreshBtn.addEventListener('click', refreshLeaderboard);
+    } else {
+        console.error('Could not find refresh button');
     }
 
     // Initial load
+    console.log('Starting initial load');
     refreshLeaderboard();
     
     // Set up periodic updates
+    console.log('Setting up periodic updates');
     setInterval(refreshLeaderboard, 5 * 60 * 1000); // Update every 5 minutes
 }); 

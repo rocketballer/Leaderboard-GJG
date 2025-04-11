@@ -13,20 +13,25 @@ let mastersData = [];
 // Function to fetch leaderboard data from RapidAPI
 async function fetchLeaderboardData() {
     try {
+        console.log('Fetching data from API...');
         const response = await fetch(API_CONFIG.url, {
             method: 'GET',
             headers: API_CONFIG.headers
         });
+        
+        console.log('API Response status:', response.status);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const data = await response.json();
+        console.log('API Response data:', data);
         return data;
     } catch (error) {
         console.error('Error fetching leaderboard data:', error);
         // Return mock data for testing
+        console.log('Using mock data instead');
         return {
             leaderboard: [
                 { position: "1", player_name: "Justin Rose", total_to_par: "-8", round1_score: 68, round2_score: 68, status: "ACTIVE" },
@@ -39,11 +44,14 @@ async function fetchLeaderboardData() {
 
 // Function to transform API data to our format
 function transformLeaderboardData(apiData) {
+    console.log('Transforming data:', apiData);
+    
     if (!apiData || !apiData.leaderboard) {
+        console.error('Invalid API data format:', apiData);
         return [];
     }
 
-    return apiData.leaderboard.map(player => ({
+    const transformedData = apiData.leaderboard.map(player => ({
         position: player.position,
         name: player.player_name,
         scoreToPar: player.total_to_par,
@@ -53,10 +61,14 @@ function transformLeaderboardData(apiData) {
         round4: player.round4_score,
         cut: player.status === 'CUT'
     }));
+    
+    console.log('Transformed data:', transformedData);
+    return transformedData;
 }
 
 // Function to update the leaderboard data
 async function updateLeaderboardData() {
+    console.log('Updating leaderboard data...');
     const data = await fetchLeaderboardData();
     if (!data) {
         console.error('Failed to fetch leaderboard data');
@@ -64,6 +76,7 @@ async function updateLeaderboardData() {
     }
 
     mastersData = transformLeaderboardData(data);
+    console.log('Updated mastersData:', mastersData);
     return mastersData;
 }
 
