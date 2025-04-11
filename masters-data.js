@@ -32,8 +32,7 @@ async function fetchLeaderboardData() {
         // Check if we have the expected data structure
         if (!data || !data.results || !data.results.leaderboard) {
             console.error('Invalid API response format:', data);
-            // Since we can't get 2025 data yet, let's create mock data for testing
-            return createMockMastersData();
+            return [];
         }
 
         // Transform the leaderboard data
@@ -43,75 +42,8 @@ async function fetchLeaderboardData() {
         return transformedData;
     } catch (error) {
         console.error('Error fetching leaderboard data:', error);
-        // Since we can't get 2025 data yet, let's create mock data for testing
-        return createMockMastersData();
+        return [];
     }
-}
-
-// Function to create mock Masters 2025 data
-function createMockMastersData() {
-    return [
-        {
-            position: 1,
-            name: "Scottie Scheffler",
-            total: "-8",
-            today: "-4",
-            thru: "F",
-            round1: "-2",
-            round2: "-1",
-            round3: "-1",
-            round4: "-4",
-            status: "active"
-        },
-        {
-            position: 2,
-            name: "Brooks Koepka",
-            total: "-6",
-            today: "-3",
-            thru: "F",
-            round1: "-1",
-            round2: "-1",
-            round3: "-1",
-            round4: "-3",
-            status: "active"
-        },
-        {
-            position: "T3",
-            name: "Jon Rahm",
-            total: "-4",
-            today: "-2",
-            thru: "F",
-            round1: "E",
-            round2: "-1",
-            round3: "-1",
-            round4: "-2",
-            status: "active"
-        },
-        {
-            position: "T3",
-            name: "Rory McIlroy",
-            total: "-4",
-            today: "-1",
-            thru: "F",
-            round1: "-1",
-            round2: "-1",
-            round3: "-1",
-            round4: "-1",
-            status: "active"
-        },
-        {
-            position: "T5",
-            name: "Jordan Spieth",
-            total: "-3",
-            today: "-2",
-            thru: "F",
-            round1: "E",
-            round2: "-1",
-            round3: "E",
-            round4: "-2",
-            status: "active"
-        }
-    ];
 }
 
 // Function to transform API data to our format
