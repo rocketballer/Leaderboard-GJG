@@ -1,130 +1,210 @@
 /* Global Styles */
 body {
-    font-family: 'Helvetica Neue', Arial, sans-serif;
-    background-color: #f8f9fa;
+    font-family: "Georgia", serif;
+    background-color: #f5f5f5;
     color: #333;
 }
 
-/* Header and Navigation */
-.navbar-brand {
-    font-weight: bold;
-    font-size: 1.6rem;
+/* Navbar Styles */
+.navbar {
+    background-color: #006747 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* Table Styles */
+.navbar-brand {
+    font-family: "Georgia", serif;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+/* Leaderboard Table Styles */
 .leaderboard-table {
     width: 100%;
     border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin-bottom: 2rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .leaderboard-table th {
-    background-color: #198754;
+    background-color: #006747;
     color: white;
+    padding: 12px 8px;
     text-align: center;
-    padding: 0.75rem;
-    border: 1px solid #dee2e6;
+    font-weight: normal;
+    font-size: 0.9rem;
+    border-bottom: 2px solid #004d35;
 }
 
 .leaderboard-table td {
-    padding: 0.75rem;
-    border: 1px solid #dee2e6;
+    padding: 12px 8px;
     text-align: center;
-}
-
-.leaderboard-table tr:nth-child(even) {
-    background-color: #f2f2f2;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 0.9rem;
 }
 
 .leaderboard-table tr:hover {
-    background-color: #e9ecef;
+    background-color: #f8f8f8;
 }
 
-/* Score Formatting */
-.score-under {
-    color: #198754;
+/* Position Column */
+.leaderboard-table td:first-child {
     font-weight: bold;
+    color: #006747;
 }
 
-.score-over {
-    color: #dc3545;
+/* Player Name Column */
+.leaderboard-table td:nth-child(2) {
+    text-align: left;
+    padding-left: 20px;
+    font-weight: 500;
+}
+
+/* Score Styling */
+.score-under {
+    color: #006747;
     font-weight: bold;
 }
 
 .score-even {
     color: #333;
-}
-
-/* Status Indicators */
-.status-active {
-    background-color: #d1e7dd;
-    color: #0f5132;
-    padding: 0.2rem 0.5rem;
-    border-radius: 0.25rem;
     font-weight: bold;
 }
 
-.status-eliminated {
-    background-color: #f8d7da;
-    color: #842029;
-    padding: 0.2rem 0.5rem;
-    border-radius: 0.25rem;
+.score-over {
+    color: #c41e3a;
     font-weight: bold;
 }
 
+/* Missed Cut Styling */
 .missed-cut {
+    color: #999;
     text-decoration: line-through;
-    color: #6c757d;
 }
 
-/* Responsive Tables */
-@media (max-width: 992px) {
-    .table-responsive {
-        overflow-x: auto;
+.missed-cut td:first-child {
+    color: #999;
+}
+
+/* Header Styles */
+h1 {
+    color: #006747;
+    font-family: "Georgia", serif;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+}
+
+/* Badge Styles */
+.badge {
+    background-color: #006747;
+    font-weight: normal;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+}
+
+/* Button Styles */
+.btn-outline-success {
+    color: #006747;
+    border-color: #006747;
+    font-size: 0.9rem;
+    padding: 6px 12px;
+}
+
+.btn-outline-success:hover {
+    background-color: #006747;
+    color: white;
+}
+
+/* Card Styles */
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+}
+
+.card-header {
+    background-color: #006747;
+    color: white;
+    font-weight: normal;
+    padding: 12px 20px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Footer Styles */
+footer {
+    background-color: #006747;
+    color: white;
+    padding: 20px 0;
+    margin-top: 3rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .leaderboard-table {
+        font-size: 0.8rem;
     }
     
     .leaderboard-table th,
     .leaderboard-table td {
-        min-width: 100px;
+        padding: 8px 4px;
+    }
+    
+    .leaderboard-table td:nth-child(2) {
+        padding-left: 10px;
     }
 }
 
-/* Card Styling */
-.card {
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 1.5rem;
-    border: none;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-.card-header {
+/* Status Indicators */
+.status-active {
+    color: #006747;
     font-weight: bold;
 }
 
-/* Augusta National Theme Colors */
-.bg-augusta {
-    background-color: #006747 !important;
+.status-eliminated {
+    color: #c41e3a;
+    font-weight: bold;
 }
 
-.text-augusta {
-    color: #006747 !important;
+/* Participant Link Styles */
+.participant-link {
+    color: #006747;
+    text-decoration: none;
+    font-weight: 500;
 }
 
-.btn-augusta {
-    background-color: #006747;
-    border-color: #006747;
-    color: white;
+.participant-link:hover {
+    color: #004d35;
+    text-decoration: underline;
 }
 
-.btn-augusta:hover {
-    background-color: #004d34;
-    border-color: #004d34;
-    color: white;
+/* Last Updated Text */
+#last-updated,
+#pool-last-updated {
+    color: #666;
+    font-size: 0.9rem;
 }
 
-/* Footer */
-footer {
-    margin-top: 3rem;
+/* Table Container */
+.table-responsive {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Legend Styles */
+.score-legend {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.score-legend span:first-child {
+    font-weight: bold;
+    margin-right: 10px;
 } 
