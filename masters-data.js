@@ -27,10 +27,19 @@ async function fetchLeaderboardData() {
 
         const data = await response.json();
         console.log('API Response data:', data);
+        console.log('API Response structure:', JSON.stringify(data, null, 2));
 
         // Check if we have the expected data structure
         if (!data || !data.leaderboard) {
             console.error('Invalid API response format:', data);
+            // Try to find the leaderboard data in a different location
+            if (data.results && data.results.leaderboard) {
+                console.log('Found leaderboard data in data.results.leaderboard');
+                return transformLeaderboardData(data.results.leaderboard);
+            } else if (Array.isArray(data)) {
+                console.log('Data is directly an array of players');
+                return transformLeaderboardData(data);
+            }
             return [];
         }
 
@@ -67,18 +76,18 @@ function transformLeaderboardData(data) {
         // Log the player object to see its structure
         console.log('Processing player:', player);
         
-        // Extract player data with fallbacks
-        const firstName = player.first_name || player.firstName || 'Unknown';
-        const lastName = player.last_name || player.lastName || 'Unknown';
-        const position = player.position || player.pos || 'Unknown';
-        const total = player.total || player.totalScore || player.score || 'E';
-        const today = player.today || player.todayScore || player.round4 || 'E';
-        const thru = player.thru || player.holesPlayed || '';
-        const round1 = player.round1 || player.r1 || 'E';
-        const round2 = player.round2 || player.r2 || 'E';
-        const round3 = player.round3 || player.r3 || 'E';
-        const round4 = player.round4 || player.r4 || 'E';
-        const status = player.status || 'Active';
+        // Extract player data with fallbacks for different API response formats
+        const firstName = player.first_name || player.firstName || player.player_first_name || 'Unknown';
+        const lastName = player.last_name || player.lastName || player.player_last_name || 'Unknown';
+        const position = player.position || player.pos || player.player_position || 'Unknown';
+        const total = player.total || player.totalScore || player.score || player.total_to_par || 'E';
+        const today = player.today || player.todayScore || player.round4 || player.today_to_par || 'E';
+        const thru = player.thru || player.holesPlayed || player.holes_played || '';
+        const round1 = player.round1 || player.r1 || player.round1_score || 'E';
+        const round2 = player.round2 || player.r2 || player.round2_score || 'E';
+        const round3 = player.round3 || player.r3 || player.round3_score || 'E';
+        const round4 = player.round4 || player.r4 || player.round4_score || 'E';
+        const status = player.status || player.player_status || 'Active';
 
         return {
             position,
