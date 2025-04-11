@@ -30,14 +30,14 @@ function updateLeaderboardDisplay() {
         const row = document.createElement('tr');
         
         // If player missed the cut, add the missed-cut class
-        if (player.cut) {
+        if (player.status === 'cut') {
             row.classList.add('missed-cut');
         }
         
         row.innerHTML = `
             <td>${player.position}</td>
             <td>${player.name}</td>
-            <td class="${getScoreClass(player.scoreToPar)}">${player.scoreToPar}</td>
+            <td class="${getScoreClass(player.total)}">${player.total}</td>
             <td>${player.thru || '-'}</td>
             <td>${player.today || '-'}</td>
             <td>${player.round1 || '-'}</td>

@@ -1,10 +1,25 @@
 // API configuration
 const API_CONFIG = {
-    url: 'https://golf-leaderboard-data.p.rapidapi.com/leaderboard/25',
+    url: 'https://live-golf-data.p.rapidapi.com/leaderboard?orgId=1&tournId=014&year=2025',
     headers: {
-        'x-rapidapi-host': 'golf-leaderboard-data.p.rapidapi.com',
+        'x-rapidapi-host': 'live-golf-data.p.rapidapi.com',
         'x-rapidapi-key': '99f110f056msh3c3016b9a453a90p131100jsn64367f516c61'
     }
+};
+
+// Tournament information
+const TOURNAMENT_INFO = {
+    id: "014",
+    name: "Masters Tournament",
+    date: {
+        start: "2025-04-10T00:00:00Z",
+        end: "2025-04-13T00:00:00Z"
+    },
+    weekNumber: "15",
+    format: "stroke",
+    purse: 20000000,
+    winnersShare: 3600000,
+    fedexCupPoints: 750
 };
 
 // Global variable to store the leaderboard data
