@@ -1,95 +1,83 @@
-# Slates GJG Masters Tournament Pool Tracker
+# Slates GJG - Masters Tournament Pool Tracker
 
-This Excel workbook is designed to manage a Masters Tournament pool with specific survival and scoring rules.
+A web-based application for tracking the Masters Tournament and a custom pool with specific survival and scoring rules.
 
 ## Features
 
-- **Tab 1: CBS Sports-Style Leaderboard**
-  - Replicates the CBS Sports Masters leaderboard with position, scores, round details, and cut line indicators
-  - Automatically color-codes scores (red for over par, green for under par)
-  - Full tournament view with individual round scores and totals
+- **Masters Leaderboard Page**
+  - Replicates the CBS Sports Masters tournament leaderboard
+  - Displays player positions, scores, round details, and cut status
+  - Color-coded scores (red for over par, green for under par)
+  - Responsive design for all devices
 
-- **Tab 2: Participants Leaderboard**
+- **Pool Leaderboard Page**
   - Tracks pool participants based on their 12 player group selections
   - Calculates survival status (eliminated if fewer than 7 player groups survive the cut)
   - Implements custom scoring: sum of best 7 scores for active participants
-  - Auto-ranks participants by their total scores
+  - Displays detailed breakdowns of each participant's selections and scores
 
-## How to Use
+## How It Works
 
-### Tournament Data (Tab 1)
+### Masters Tournament Data
 
-1. Enter or update player data in Tab 1 ("CBS Leaderboard")
-2. For each player, enter:
-   - Position (e.g., T1, 2, MC)
-   - Player name
-   - Score to par (e.g., -5, E, +3)
-   - Current round progress (e.g., F, 15)
-   - Current round score (e.g., -3, E, +2)
-   - Individual round scores (R1-R4)
-   - Total aggregate score
-3. For players who miss the cut, enter "CUT" in the CUT column and "MC" in the POS column
+The application maintains a list of players with their current tournament data:
+- Position (e.g., T1, 2, MC)
+- Player name
+- Score to par (e.g., -5, E, +3)
+- Current round progress (e.g., F, 15)
+- Current round score (e.g., -3, E, +2)
+- Individual round scores (R1-R4)
+- Total aggregate score
+- Cut status
 
-### Participant Data (Tab 2)
+Players who miss the cut are displayed with strikethrough text and "MC" in the position column.
 
-1. Enter each participant's name in the PARTICIPANT column
-2. Enter their 12 player group selections in the PLAYER GROUP columns
-3. The workbook will automatically calculate:
-   - GROUPS SURVIVED: Count of players who made the cut
-   - STATUS: "Active" if 7+ groups survived, otherwise "Eliminated"
-   - TOTAL SCORE: Sum of best 7 scores for active participants
-   - RANK: Automatic ranking based on total scores
+### Participant Scoring System
 
-## Implementation Details
+The application implements the specific pool rules:
 
-### Required Formulas
+1. **Survival Mechanics:**
+   - After Round 2 (the cut), the system counts how many of each participant's 12 player groups have at least 1 player who made the cut
+   - If fewer than 7 groups survive, the participant is marked as "Eliminated"
 
-The workbook contains instructions for implementing the following key formulas:
+2. **Scoring Calculation:**
+   - For participants with 7+ surviving groups: Sum the best 7 scores to par from their surviving players
+   - For all participants: Include all surviving players' scores + missed-cut players' final scores
+   - The participant with the lowest total score (best to par) wins
 
-1. **GROUPS SURVIVED Formula (Column D)**:
-   ```
-   =COUNTIFS('CBS Leaderboard'!B:B,F2,'CBS Leaderboard'!K:K,"<>CUT") + 
-    COUNTIFS('CBS Leaderboard'!B:B,G2,'CBS Leaderboard'!K:K,"<>CUT") + ...
-   ```
-   (Repeat for all player groups)
+3. **Interactive Details:**
+   - Click on any participant's name to view their player selections and detailed scoring breakdown
+   - See which players made the cut and how their scores contribute to the total
 
-2. **STATUS Formula (Column E)**:
-   ```
-   =IF(D2>=7,"Active","Eliminated")
-   ```
+## Technical Implementation
 
-3. **TOTAL SCORE Formula (Column C)**:
-   ```
-   =IF(D2>=7,
-       SUM(SMALL(IF(COUNTIF('CBS Leaderboard'!B:B,{F2,G2,...,Q2})>0,
-           VLOOKUP({F2,G2,...,Q2},'CBS Leaderboard'!B:C,2,FALSE)),{1,2,3,4,5,6,7})),
-       SUM(IF(COUNTIF('CBS Leaderboard'!B:B,{F2,G2,...,Q2})>0,
-           VLOOKUP({F2,G2,...,Q2},'CBS Leaderboard'!B:C,2,FALSE)))
-   )
-   ```
+- Pure HTML, CSS, and vanilla JavaScript
+- Bootstrap 5 for responsive design
+- No backend required - data is updated in the JavaScript file
+- Mobile-friendly interface
 
-4. **RANK Formula (Column A)**:
-   ```
-   =RANK.EQ(C2,$C$2:$C$100)
-   ```
+## Setup Instructions
 
-## Scoring Rules
+1. Clone this repository
+2. Open the index.html file in your web browser
+3. To update tournament data:
+   - Edit the `mastersData` array in scripts.js
+   - Update player scores, positions, and cut status as the tournament progresses
 
-1. Each participant selects 12 player groups
-2. After Round 2 (the cut):
-   - Count how many player groups have at least 1 player who made the cut
-   - If fewer than 7 groups survive, participant is eliminated
-3. Final scoring:
-   - If 7+ groups survived: Sum the best 7 scores from surviving players
-   - If fewer than 12 groups survived: Include all surviving players' scores + missed-cut players' final scores
+## Customization
 
-## Notes
+- To add or modify participants and their player selections:
+  - Edit the `participantsData` array in scripts.js
+  - Each participant needs a name and an array of 12 player names
 
-- This workbook uses Excel formulas to automate all calculations
-- Some formulas may require modifications based on your specific sheet layout
-- In newer Excel versions, array formulas are automatically calculated
-- In older Excel versions, you may need to use Ctrl+Shift+Enter for array formulas
+## Hosting
+
+This is a static website that can be hosted on any web server or platform that supports static files:
+- GitHub Pages
+- Netlify 
+- Vercel
+- Any standard web hosting service
 
 ## License
 
-This project is available for use under the [MIT License](LICENSE). 
+This project is available for use under the MIT License. 

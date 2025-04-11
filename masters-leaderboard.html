@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masters Leaderboard - Slates GJG</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">Slates GJG</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="masters-leaderboard.html">Masters Leaderboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="pool-leaderboard.html">Pool Leaderboard</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-4">Masters Tournament Leaderboard</h1>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <span class="badge bg-success">LIVE</span>
+                        <span class="ms-2">Last updated: <span id="last-updated">April 14, 2025 3:45 PM ET</span></span>
+                    </div>
+                    <button id="refresh-btn" class="btn btn-outline-success">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+                        </svg>
+                        Refresh
+                    </button>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="leaderboard-table" id="masters-leaderboard">
+                        <thead>
+                            <tr>
+                                <th>POS</th>
+                                <th>PLAYER</th>
+                                <th>TO PAR</th>
+                                <th>THRU</th>
+                                <th>TODAY</th>
+                                <th>R1</th>
+                                <th>R2</th>
+                                <th>R3</th>
+                                <th>R4</th>
+                                <th>TOTAL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Leaderboard data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="card mb-3">
+                            <div class="card-header bg-success text-white">
+                                Score Legend
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="score-under">-5</span>
+                                    <span>Under Par</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="score-even">E</span>
+                                    <span>Even Par</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="score-over">+3</span>
+                                    <span>Over Par</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card mb-3">
+                            <div class="card-header bg-success text-white">
+                                Data Source
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-0">This leaderboard data is manually updated to mirror the official Masters Tournament leaderboard.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card mb-3">
+                            <div class="card-header bg-success text-white">
+                                Cut Line
+                            </div>
+                            <div class="card-body">
+                                <p class="mb-0">Players who miss the cut after Round 2 are indicated with strikethrough text and "MC" in position.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-success text-white text-center py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">© 2025 Slates GJG - Masters Tournament Pool</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="scripts.js"></script>
+</body>
+</html> 

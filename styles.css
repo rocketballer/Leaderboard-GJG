@@ -1,0 +1,130 @@
+/* Global Styles */
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* Header and Navigation */
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.6rem;
+}
+
+/* Table Styles */
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.leaderboard-table th {
+    background-color: #198754;
+    color: white;
+    text-align: center;
+    padding: 0.75rem;
+    border: 1px solid #dee2e6;
+}
+
+.leaderboard-table td {
+    padding: 0.75rem;
+    border: 1px solid #dee2e6;
+    text-align: center;
+}
+
+.leaderboard-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.leaderboard-table tr:hover {
+    background-color: #e9ecef;
+}
+
+/* Score Formatting */
+.score-under {
+    color: #198754;
+    font-weight: bold;
+}
+
+.score-over {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.score-even {
+    color: #333;
+}
+
+/* Status Indicators */
+.status-active {
+    background-color: #d1e7dd;
+    color: #0f5132;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.25rem;
+    font-weight: bold;
+}
+
+.status-eliminated {
+    background-color: #f8d7da;
+    color: #842029;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.25rem;
+    font-weight: bold;
+}
+
+.missed-cut {
+    text-decoration: line-through;
+    color: #6c757d;
+}
+
+/* Responsive Tables */
+@media (max-width: 992px) {
+    .table-responsive {
+        overflow-x: auto;
+    }
+    
+    .leaderboard-table th,
+    .leaderboard-table td {
+        min-width: 100px;
+    }
+}
+
+/* Card Styling */
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    font-weight: bold;
+}
+
+/* Augusta National Theme Colors */
+.bg-augusta {
+    background-color: #006747 !important;
+}
+
+.text-augusta {
+    color: #006747 !important;
+}
+
+.btn-augusta {
+    background-color: #006747;
+    border-color: #006747;
+    color: white;
+}
+
+.btn-augusta:hover {
+    background-color: #004d34;
+    border-color: #004d34;
+    color: white;
+}
+
+/* Footer */
+footer {
+    margin-top: 3rem;
+} 
