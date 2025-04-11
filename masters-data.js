@@ -61,6 +61,107 @@ async function fetchLeaderboardData() {
     }
 }
 
+// Update the leaderboard table with new data
+function updateLeaderboardTable(data) {
+    const tbody = document.querySelector('#masters-leaderboard tbody');
+    if (!tbody) {
+        console.error('Could not find leaderboard table body');
+        return;
+    }
+
+    // Clear existing rows
+    tbody.innerHTML = '';
+
+    // Add new rows
+    data.forEach(player => {
+        const row = document.createElement('tr');
+        
+        // Add position
+        const positionCell = document.createElement('td');
+        positionCell.textContent = player.position || '-';
+        row.appendChild(positionCell);
+
+        // Add player name
+        const nameCell = document.createElement('td');
+        nameCell.textContent = player.playerName;
+        if (player.isAmateur) {
+            const amateurBadge = document.createElement('span');
+            amateurBadge.className = 'badge bg-success ms-2';
+            amateurBadge.textContent = 'A';
+            nameCell.appendChild(amateurBadge);
+        }
+        row.appendChild(nameCell);
+
+        // Add total to par
+        const totalCell = document.createElement('td');
+        totalCell.textContent = player.total;
+        row.appendChild(totalCell);
+
+        // Add thru
+        const thruCell = document.createElement('td');
+        thruCell.textContent = player.thru;
+        row.appendChild(thruCell);
+
+        // Add today's score
+        const todayCell = document.createElement('td');
+        todayCell.textContent = player.currentRoundScore;
+        row.appendChild(todayCell);
+
+        // Add round scores
+        const round1Cell = document.createElement('td');
+        round1Cell.textContent = player.round1 || '-';
+        row.appendChild(round1Cell);
+
+        const round2Cell = document.createElement('td');
+        round2Cell.textContent = player.round2 || '-';
+        row.appendChild(round2Cell);
+
+        const round3Cell = document.createElement('td');
+        round3Cell.textContent = player.round3 || '-';
+        row.appendChild(round3Cell);
+
+        const round4Cell = document.createElement('td');
+        round4Cell.textContent = player.round4 || '-';
+        row.appendChild(round4Cell);
+
+        // Add total strokes
+        const totalStrokesCell = document.createElement('td');
+        totalStrokesCell.textContent = player.totalStrokes;
+        row.appendChild(totalStrokesCell);
+
+        // Add status
+        const statusCell = document.createElement('td');
+        statusCell.textContent = player.status;
+        row.appendChild(statusCell);
+
+        tbody.appendChild(row);
+    });
+}
+
+// Update the last updated timestamp
+function updateLastUpdatedTimestamp(timestamp) {
+    const lastUpdatedElement = document.getElementById('last-updated');
+    if (!lastUpdatedElement) {
+        console.error('Could not find last-updated element');
+        return;
+    }
+
+    // Convert timestamp to readable date format
+    const date = new Date(parseInt(timestamp));
+    const options = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric', 
+        hour: 'numeric', 
+        minute: '2-digit', 
+        timeZoneName: 'short',
+        hour12: true
+    };
+    
+    const formattedDate = date.toLocaleString('en-US', options);
+    lastUpdatedElement.textContent = formattedDate;
+}
+
 // Transform API data to our format
 function transformLeaderboardData(data) {
     console.log('API Response data:', data);
@@ -71,16 +172,33 @@ function transformLeaderboardData(data) {
         return [];
     }
 
+    // Update the last updated timestamp if available
+    if (data.lastUpdated && data.lastUpdated.$date && data.lastUpdated.$date.$numberLong) {
+        updateLastUpdatedTimestamp(data.lastUpdated.$date.$numberLong);
+    }
+
     return data.leaderboardRows.map(player => {
         // Extract position number from position string (e.g., "T3" -> 3)
         const positionMatch = player.position.match(/\d+/);
         const position = positionMatch ? parseInt(positionMatch[0]) : null;
 
-        // Calculate total strokes
-        const totalStrokes = player.totalStrokesFromCompletedRounds || '0';
+        // Get round scores
+        const rounds = player.rounds || [];
+        let round1 = '-';
+        let round2 = '-';
+        let round3 = '-';
+        let round4 = '-';
 
-        // Get current round score
-        const currentRoundScore = player.currentRoundScore || '0';
+        rounds.forEach(round => {
+            const roundNum = parseInt(round.roundId.$numberInt);
+            const score = round.scoreToPar;
+            switch(roundNum) {
+                case 1: round1 = score; break;
+                case 2: round2 = score; break;
+                case 3: round3 = score; break;
+                case 4: round4 = score; break;
+            }
+        });
 
         // Get status
         let status = 'Active';
@@ -93,23 +211,25 @@ function transformLeaderboardData(data) {
         }
 
         return {
-            position: position,
+            position: player.position || '-',
             playerName: `${player.firstName} ${player.lastName}`,
-            totalStrokes: parseInt(totalStrokes),
-            currentRoundScore: parseInt(currentRoundScore),
-            status: status,
-            isAmateur: player.isAmateur || false,
-            teeTime: player.teeTime || 'TBD',
-            currentRound: parseInt(player.currentRound) || 1,
+            total: player.total || 'E',
             thru: player.thru || '0',
-            total: player.total || '0'
+            currentRoundScore: player.currentRoundScore || 'E',
+            round1,
+            round2,
+            round3,
+            round4,
+            totalStrokes: player.totalStrokesFromCompletedRounds || '0',
+            status: status,
+            isAmateur: player.isAmateur || false
         };
     }).sort((a, b) => {
-        // Sort by position (null positions go to the end)
-        if (a.position === null && b.position === null) return 0;
-        if (a.position === null) return 1;
-        if (b.position === null) return -1;
-        return a.position - b.position;
+        // Sort by position (non-numeric positions go to the end)
+        if (a.position === '-' && b.position === '-') return 0;
+        if (a.position === '-') return 1;
+        if (b.position === '-') return -1;
+        return parseInt(a.position) - parseInt(b.position);
     });
 }
 
