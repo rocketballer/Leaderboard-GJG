@@ -46,20 +46,24 @@ async function fetchLeaderboardData() {
 function transformLeaderboardData(apiData) {
     console.log('Transforming data:', apiData);
     
-    if (!apiData || !apiData.leaderboard) {
+    // Check if we have the expected data structure
+    if (!apiData || !apiData.results || !apiData.results.leaderboard) {
         console.error('Invalid API data format:', apiData);
         return [];
     }
 
-    const transformedData = apiData.leaderboard.map(player => ({
-        position: player.position,
-        name: player.player_name,
-        scoreToPar: player.total_to_par,
-        round1: player.round1_score,
-        round2: player.round2_score,
-        round3: player.round3_score,
-        round4: player.round4_score,
-        cut: player.status === 'CUT'
+    const transformedData = apiData.results.leaderboard.map(player => ({
+        position: player.position || '-',
+        name: player.player_name || 'Unknown',
+        scoreToPar: player.total_to_par || 'E',
+        round1: player.round1_score || '-',
+        round2: player.round2_score || '-',
+        round3: player.round3_score || '-',
+        round4: player.round4_score || '-',
+        cut: player.status === 'CUT',
+        thru: player.thru || '-',
+        today: player.today || '-',
+        total: player.total || '-'
     }));
     
     console.log('Transformed data:', transformedData);
