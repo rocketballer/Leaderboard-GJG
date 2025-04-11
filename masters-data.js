@@ -1,6 +1,6 @@
 // API configuration
 const API_CONFIG = {
-    url: 'https://golf-leaderboard-data.p.rapidapi.com/masters/2025',
+    url: 'https://golf-leaderboard-data.p.rapidapi.com/leaderboard/25',
     headers: {
         'x-rapidapi-host': 'golf-leaderboard-data.p.rapidapi.com',
         'x-rapidapi-key': '99f110f056msh3c3016b9a453a90p131100jsn64367f516c61'
