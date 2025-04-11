@@ -11,9 +11,17 @@ function getScoreClass(score) {
 // Function to update the leaderboard display
 function updateLeaderboardDisplay() {
     const tableBody = document.querySelector('#masters-leaderboard tbody');
-    if (!tableBody) return;
+    if (!tableBody) {
+        console.error('Could not find table body element');
+        return;
+    }
     
     tableBody.innerHTML = '';
+    
+    if (!mastersData || mastersData.length === 0) {
+        console.error('No data available to display');
+        return;
+    }
     
     mastersData.forEach(player => {
         const row = document.createElement('tr');
@@ -54,13 +62,25 @@ function updateLeaderboardDisplay() {
 
 // Function to refresh the leaderboard
 async function refreshLeaderboard() {
-    await updateLeaderboardData();
-    updateLeaderboardDisplay();
+    try {
+        await updateLeaderboardData();
+        updateLeaderboardDisplay();
+    } catch (error) {
+        console.error('Error refreshing leaderboard:', error);
+    }
 }
 
-// Add event listener for the refresh button
-document.getElementById('refresh-btn').addEventListener('click', refreshLeaderboard);
+// Wait for DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Add event listener for the refresh button
+    const refreshBtn = document.getElementById('refresh-btn');
+    if (refreshBtn) {
+        refreshBtn.addEventListener('click', refreshLeaderboard);
+    }
 
-// Initial load and periodic updates
-refreshLeaderboard();
-setInterval(refreshLeaderboard, 5 * 60 * 1000); // Update every 5 minutes 
+    // Initial load
+    refreshLeaderboard();
+    
+    // Set up periodic updates
+    setInterval(refreshLeaderboard, 5 * 60 * 1000); // Update every 5 minutes
+}); 
